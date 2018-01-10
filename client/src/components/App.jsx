@@ -1,69 +1,50 @@
 import React from 'react';
+import { connect, sendMessage } from '../socket_helpers/websocket_helpers';
 
 export default class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      connected: false,
-      socket: '',
+      messages: [],
+      // users: [],
+      ws: {},
     };
-    // connect to websocket server
-    // this.socket = new WebSocket(location.origin.replace(/^http/, 'ws'));
-    // this.socket = new WebSocket('ws://127.0.0.1:3000');
-    // this.socket.onopen = () => {
-    //   this.setState({
-    //     connected: true,
-    //   });
-    // };
-    // this.socket = new WebSocket('ws://10.8.72.210:3000');
 
     this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    this.socket = new WebSocket('ws://10.8.72.210:3000');
-    this.socket.addEventListener('open', () => {
-      const msg = 'hello server';
-      this.socket.send(JSON.stringify(msg));
-      this.setState({
-        connected: true,
-      });
-    });
+    // TODO: CHANGE TO PRODUCTION SERVER location.origin.replace(/^http/, 'wss')
+    let server = 'wss://slackk-casa.herokuapp.com/';
+
+    // connect to the websocket server
+    connect(server, this);
   }
 
+  // sends the input field value as a json object to the server socket
   handleClick() {
-    let { connected } = this.state;
-    let msg = { message: this.textInput.value };
-    if (connected) {
-      this.socket.send(JSON.stringify(msg));
-    } else {
-      console.log('failed to send message');
-    }
+    let msg = {
+      code: 200,
+      message: 'sending message to server',
+      method: 'POSTMESSAGE',
+      data: {
+        text: this.textInput.value,
+      },
+    };
+    sendMessage(this.state.ws, JSON.stringify(msg));
   }
+
 
   render() {
     return (
       <div>
+        {this.state.testText}
         <input type="text" ref={(input) => { this.textInput = input; }} />
         <button onClick={this.handleClick}>
           Send!
         </button>
+        {JSON.stringify(this.state.messages)}
       </div>
     );
   }
 }
-
-
-// // connect to websocket server
-// let socket = new WebSocket(location.origin.replace(/^http/, 'ws'));
-
-// // event handler when client recieves a message from server
-// socket.onmessage = (event) => {
-//   document.getElementById("response").innerText = event.data;
-//   console.log(event.data)
-// };
-
-// document.getElementById("send").onclick = (event) => {
-//   // using websocket to send data to server
-//   socket.send(JSON.stringify(document.getElementById("inputBox").value));
-// };
