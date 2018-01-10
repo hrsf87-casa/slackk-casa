@@ -1,23 +1,34 @@
 let ws = null;
 let app = null;
 
-// takes in server ip or wss protocall to connect to server
-// takes in component to have scope in function
-const connect = (server, component) => {
-  // create new socket server instance
-  ws = new WebSocket(server);
-  app = component;
-  // on connection run the callback
-  ws.addEventListener('open', () => {
-    console.log('Connected to the server');
-    // send a confirmation to server
-    sendMessage(JSON.stringify('Connnected to Server Socket!'));
-    // sets state to current socket session for App methods to have access
-    app.setState({ ws });
-    // calls after connect function that takes in the socket session
-    // and app component
-    afterConnect();
-  });
+// takes in an array of messages
+// objects and sets the component state messages
+// with the new array of messages recieved
+const addNewMessages = (messages) => {
+  app.setState({ messages });
+};
+
+// takes in message as object
+// msg ({id: #, text: '', createdAt: date})
+// and concats message to message state of app
+const addNewMessage = (message) => {
+  app.setState({ messages: [...app.state.messages, message] });
+};
+
+// not handling users yet
+// const setUsers = (app, users) => {
+//   app.setState({ users });
+// }
+
+// takes in a parameter and sends that parameter to the socket server
+const sendMessage = (data) => {
+  const msg = {
+    method: 'POSTMESSAGE',
+    data: {
+      text: data,
+    },
+  };
+  ws.send(JSON.stringify(msg));
 };
 
 // ws refers to websocket object
@@ -53,34 +64,21 @@ const afterConnect = () => {
   };
 };
 
-// takes in an array of messages
-// objects and sets the component state messages
-// with the new array of messages recieved
-const addNewMessages = (messages) => {
-  app.setState({ messages });
-};
-
-// takes in message as object
-// msg ({id: #, text: '', createdAt: date})
-// and concats message to message state of app
-const addNewMessage = (message) => {
-  app.setState({ messages: [...app.state.messages, message] });
-};
-
-// not handling users yet
-// const setUsers = (app, users) => {
-//   app.setState({ users });
-// }
-
-// takes in a parameter and sends that parameter to the socket server
-const sendMessage = (data) => {
-  const msg = {
-    method: 'POSTMESSAGE',
-    data: {
-      text: data,
-    },
-  };
-  ws.send(JSON.stringify(msg));
+// takes in server ip or wss protocall to connect to server
+// takes in component to have scope in function
+const connect = (server, component) => {
+  // create new socket server instance
+  ws = new WebSocket(server);
+  app = component;
+  // on connection run the callback
+  ws.addEventListener('open', () => {
+    console.log('Connected to the server');
+    // sets state to current socket session for App methods to have access
+    app.setState({ ws });
+    // calls after connect function that takes in the socket session
+    // and app component
+    afterConnect();
+  });
 };
 
 export { connect, sendMessage, afterConnect };

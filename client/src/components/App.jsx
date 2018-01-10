@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect, sendMessage } from '../socketHelpers';
+import MessageList from './MessageList.jsx';
 
 export default class App extends React.Component {
   constructor() {
@@ -8,13 +9,10 @@ export default class App extends React.Component {
       messages: [],
       // users: [],
     };
-
-    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    // TODO: CHANGE TO PRODUCTION SERVER location.origin.replace(/^http/, 'ws')
-    let server = 'wss://slackk-casa.herokuapp.com/';
+    let server = location.origin.replace(/^http/, 'ws');
 
     // connect to the websocket server
     connect(server, this);
@@ -26,17 +24,17 @@ export default class App extends React.Component {
   }
 
   render() {
+    let { messages } = this.state;
     return (
       <div>
-        {this.state.testText}
         <input
           type="text"
           ref={(input) => {
             this.textInput = input;
           }}
         />
-        <button onClick={this.handleClick}>Send!</button>
-        {JSON.stringify(this.state.messages)}
+        <button onClick={() => this.handleClick()}>Send!</button>
+        <MessageList messages={messages} />
       </div>
     );
   }
