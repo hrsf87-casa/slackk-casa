@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "node"
+env:
+  - DATABASE_URL="postgresql://test:test@localhost/slackkcasa"
+  - NPM_CONFIG_PRODUCTION=false
+  - INITIALIZEDB=true
+before_install:
+  - npm i -g npm@5.5.1
+install:
+  - npm install
+  - webpack -p
+before_script:
+  - psql -c "CREATE DATABASE slackkcasa;" -U postgres
+  - psql -c "CREATE USER test WITH PASSWORD 'test';" -U postgres
