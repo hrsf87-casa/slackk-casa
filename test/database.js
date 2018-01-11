@@ -64,18 +64,18 @@ describe('Database', () => {
   });
   describe('createUser', () => {
     it('should create a user with login and password', (done) => {
-      db.createUser(['1234123412345', '123']).then((data) => {
-        expect(data.rows[0].username).to.equal('1234123412345');
-        expect(data.rows[0].password).to.equal('123');
+      db.createUser(['test', 'test']).then((data) => {
+        expect(data.rows[0].username).to.equal('test');
+        expect(data.rows[0].password).to.equal('test');
         done();
       });
     }).timeout(1000);
   });
   describe('login', () => {
     it('should handle a login', (done) => {
-      db.login(['1234123412345', '123']).then((data) => {
-        expect(data.rows[0].username).to.equal('1234123412345');
-        expect(data.rows[0].password).to.equal('123');
+      db.login(['test', 'test']).then((data) => {
+        expect(data.rows[0].username).to.equal('test');
+        expect(data.rows[0].password).to.equal('test');
         done();
       });
     }).timeout(1000);

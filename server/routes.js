@@ -20,9 +20,8 @@ router.post('/signup', (req, res) => {
   let params = [username, password];
   db.createUser(params)
     .then((data, code) => {
-      console.log(code);
       if (code === '23505') {
-        res.status(400).send('username exists');
+        res.status(400).send(JSON.stringify('username exists'));
       } else {
         res.send(200);
       }
@@ -36,9 +35,8 @@ router.post('/login', (req, res) => {
   let params = [username, password];
   db.login(params)
     .then((data) => {
-      console.log(data);
       if (data.rows.length === 0) {
-        res.status(401).send('invalid login');
+        res.status(401).send(JSON.stringify('invalid login'));
       } else {
         res.send(201);
       }
