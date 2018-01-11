@@ -14,6 +14,9 @@ export default class Signup extends React.Component {
   }
 
   signUp() {
+    if (username === '') {
+      return this.setState({ signupStatus: 'Enter a username' });
+    }
     let { username, password } = this.state;
     if (username === '') {
       return this.setState({ signupStatus: 'Enter a username' });
