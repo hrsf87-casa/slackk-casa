@@ -23,8 +23,8 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    // let server = 'wss://slackk-casa.herokuapp.com';
-    let server = location.origin.replace(/^http/, 'ws');
+    let server = 'wss://slackk-casa.herokuapp.com';
+    // let server = location.origin.replace(/^http/, 'ws');
 
     // connect to the websocket server
     connect(server, this);

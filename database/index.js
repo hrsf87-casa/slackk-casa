@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  connectionString: process.env.DATABASE_URL || 'pg://Link:@localhost/slackk',
+  // ssl: true,
 });
 
 client
