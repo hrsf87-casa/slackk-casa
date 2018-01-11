@@ -164,13 +164,14 @@ export default class App extends React.Component {
   componentDidMount() {
     // let server = location.origin.replace(/^http/, 'ws');
     let server = 'ws://127.0.0.1:3000';
-
+    console.log(this.props.match.params.username);
     // connect to the websocket server
     connect(server, this);
   }
 
   // sends the input field value as a json object to the server socket
   handleClick() {
+    console.log(this.props.match.params.username);
     sendMessage(this.state.query);
   }
 
@@ -178,6 +179,8 @@ export default class App extends React.Component {
     this.setState({
       query: event.target.value,
     });
+    console.log(this.state.query);
+    console.log(this.props.match.params.username);
   }
 
   render() {
