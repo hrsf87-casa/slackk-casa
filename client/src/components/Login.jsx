@@ -43,7 +43,7 @@ export default class Login extends React.Component {
         <input type="text" className="password-input" onChange={this.handlePassword} />
         {/* <Route path ="/messages" render={()=> <App username={this.state.username} />}><button>Log in!</button></Route> */}
 
-        <Link to={{pathname: `/messages/${this.state.username}`, state: {username: this.state.username, password: this.state.password}}}><button onClick={() => this.onClick()}>Log in!</button></Link>
+        <Link to={{pathname: '/messages', state: {username: this.state.username, password: this.state.password}}}><button onClick={() => this.onClick()}>Log in!</button></Link>
       </div>
     );
   }

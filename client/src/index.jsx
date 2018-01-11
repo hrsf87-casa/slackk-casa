@@ -14,6 +14,6 @@ ReactDOM.render(<Router>
         <Route exact path="/" component={Home} />
         <Route path="/signup" component={Signup}/>
         <Route path="/login" component={Login}/>
-        <Route path="/messages/:username" component={App}/>
+        <Route path="/messages" component={App}/>
       </div>
     </Router>, document.getElementById('app'));

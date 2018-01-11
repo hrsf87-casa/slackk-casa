@@ -173,7 +173,7 @@ export default class App extends React.Component {
   handleClick() {
     console.log('username: ', this.props.location.state.username);
     console.log('password: ', this.props.location.state.password);
-    console.log('queryId param', this.props.match.params.username);
+    // console.log('queryId param', this.props.match.params.username);
     //remove :username from url if you wish.
     sendMessage(this.state.query);
   }

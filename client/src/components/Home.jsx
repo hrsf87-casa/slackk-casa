@@ -8,7 +8,8 @@ export default class Home extends React.Component {
   render() {
     return (
       <div className="Home">
-        <Link to="/Signup"><button>Signup</button></Link>
+        <Link to="/signup"><button>Signup</button></Link>
+        <Link to="/login"><button>Login</button></Link>
       </div>
     );
   }
