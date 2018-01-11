@@ -37,8 +37,22 @@ const postMessage = message =>
 const getMessages = () => client.query('SELECT * FROM messages').then(data => data.rows);
 
 // TODO storing username and password as basic text. Change this later to more secure version.
-const createUser = params => client.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', params)
-  .catch(err => err);
+const createUser = (params) => {
+  return new Promise((resolve, reject) => client.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', params,
+    (err, data) => {
+      if (err) {
+        if (err.code === '23505') {
+          console.log('Duplicate entry');
+
+          resolve(data, '23505');
+        }
+        reject(err);
+      }
+      resolve(data);
+    })
+  );
+};
+
 
 const login = params => client.query('SELECT * FROM users WHERE username = ($1) AND password = ($2)', params);
 
@@ -59,4 +73,5 @@ module.exports = {
   getMessages,
   login,
   createUser,
+  initializeUsers,
 };

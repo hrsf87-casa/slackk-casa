@@ -64,8 +64,8 @@ describe('Database', () => {
   });
   describe('createUser', () => {
     it('should create a user with login and password', (done) => {
-      db.createUser(['austin', '123']).then((data) => {
-        expect(data.rows[0].username).to.equal('austin');
+      db.createUser(['1234123412345', '123']).then((data) => {
+        expect(data.rows[0].username).to.equal('1234123412345');
         expect(data.rows[0].password).to.equal('123');
         done();
       });
@@ -73,8 +73,8 @@ describe('Database', () => {
   });
   describe('login', () => {
     it('should handle a login', (done) => {
-      db.login(['austin', '123']).then((data) => {
-        expect(data.rows[0].username).to.equal('austin');
+      db.login(['1234123412345', '123']).then((data) => {
+        expect(data.rows[0].username).to.equal('1234123412345');
         expect(data.rows[0].password).to.equal('123');
         done();
       });

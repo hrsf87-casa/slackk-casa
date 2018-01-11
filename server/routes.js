@@ -19,8 +19,9 @@ router.post('/signup', (req, res) => {
   let { username, password } = req.body;
   let params = [username, password];
   db.createUser(params)
-    .then((data) => {
-      if (data.name === 'error') {
+    .then((data, code) => {
+      console.log(code);
+      if (code === '23505') {
         res.status(400).send('username exists');
       } else {
         res.send(200);
