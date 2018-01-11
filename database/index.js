@@ -3,8 +3,9 @@ const path = require('path');
 const fs = require('fs');
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  connectionString: 'pg://Link:@localhost/slackk',
+  // connectionString: process.env.DATABASE_URL,
+  // ssl: true,
 });
 
 client
@@ -12,10 +13,19 @@ client
   .then(() => console.log('connected to postgres db'))
   .catch(e => console.error('error connecting to postgres db, ', e.stack));
 
-const initializeDB = () =>
+const initializeMessages = () =>
   new Promise((resolve, reject) => {
     fs.readFile(
       path.join(__dirname, '/schema/messages.sql'),
+      'utf8',
+      (err, data) => (err ? reject(err) : resolve(data)),
+    );
+  }).then(data => client.query(data));
+
+const initializeUsers = () =>
+  new Promise((resolve, reject) => {
+    fs.readFile(
+      path.join(__dirname, '/schema/users.sql'),
       'utf8',
       (err, data) => (err ? reject(err) : resolve(data)),
     );
@@ -26,15 +36,27 @@ const postMessage = message =>
 
 const getMessages = () => client.query('SELECT * FROM messages').then(data => data.rows);
 
+// TODO storing username and password as basic text. Change this later to more secure version.
+const createUser = params => client.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', params)
+  .catch(err => err);
+
+const login = params => client.query('SELECT * FROM users WHERE username = ($1) AND password = ($2)', params);
+
 if (process.env.INITIALIZEDB) {
-  initializeDB()
+  initializeMessages()
+    .then(console.log)
+    .catch(console.log);
+
+  initializeUsers()
     .then(console.log)
     .catch(console.log);
 }
 
 module.exports = {
   client,
-  initializeDB,
+  initializeMessages,
   postMessage,
   getMessages,
+  login,
+  createUser,
 };
