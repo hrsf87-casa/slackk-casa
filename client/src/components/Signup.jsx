@@ -1,5 +1,6 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { Alert, Container, FormGroup, Input, Button } from 'reactstrap';
 
 export default class Signup extends React.Component {
   constructor(props) {
@@ -8,6 +9,7 @@ export default class Signup extends React.Component {
       username: '',
       password: '',
       signupSuccess: false,
+      signupStatus: '',
     };
   }
 
@@ -18,7 +20,10 @@ export default class Signup extends React.Component {
       body: { username, password },
       headers: { 'content-type': 'application/json' },
     })
-      .then(resp => (resp.status === 200 ? this.setState({ signupSuccess: true }) : console.log('nah')))
+      .then(resp =>
+        (resp.status === 201
+          ? this.setState({ signupSuccess: true })
+          : this.setState({ signupStatus: `${resp.status} - ${resp.statusText}` })))
       .catch(console.error);
   }
 
@@ -33,8 +38,20 @@ export default class Signup extends React.Component {
   }
 
   render() {
+    const styles = {
+      body: {
+        paddingTop: '40px',
+        paddingBottom: '40px',
+        height: '100%',
+        maxWidth: '330px',
+        padding: '15px',
+        margin: '0 auto',
+        textAlign: 'center',
+      },
+    };
+
     return (
-      <div>
+      <div style={styles.body}>
         {this.state.signupSuccess ? (
           <Redirect
             to={{
@@ -42,25 +59,40 @@ export default class Signup extends React.Component {
             }}
           />
         ) : (
-          <div className="nav">
-            User:
-            <input
-              type="text"
-              name="username"
-              className="username-input"
-              onChange={e => this.handleOnChange(e)}
-              onKeyPress={e => this.handleKeyPress(e)}
-            />
-            Password:
-            <input
-              type="text"
-              name="password"
-              className="password-input"
-              onChange={e => this.handleOnChange(e)}
-              onKeyPress={e => this.handleKeyPress(e)}
-            />
-            <button onClick={() => this.signUp()}>Sign Up</button>
-          </div>
+          <Container>
+            <Link style={{ textDecoration: 'none' }} to="/">
+              <h1>slackk-casa</h1>
+            </Link>
+            <br />
+            {this.state.signupStatus ? (
+              <Alert color="danger">{this.state.signupStatus}</Alert>
+            ) : (
+              undefined
+            )}
+            <h2>Sign up</h2>
+            <br />
+            <FormGroup>
+              <Input
+                type="text"
+                placeholder="Username"
+                name="username"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                size="lg"
+              />
+              <Input
+                type="password"
+                placeholder="Password"
+                name="password"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                size="lg"
+              />
+            </FormGroup>
+            <Button onClick={() => this.signUp()} color="primary" size="lg" block>
+              Sign up
+            </Button>
+          </Container>
         )}
       </div>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { Alert, Container, FormGroup, Input, Button } from 'reactstrap';
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -8,17 +9,21 @@ export default class Login extends React.Component {
       username: '',
       password: '',
       loginSuccess: false,
+      loginStatus: '',
     };
   }
 
-  signUp() {
+  logIn() {
     let { username, password } = this.state;
-    fetch('/signup', {
+    fetch('/login', {
       method: 'POST',
       body: { username, password },
       headers: { 'content-type': 'application/json' },
     })
-      .then(resp => (resp.status === 200 ? this.setState({ loginSuccess: true }) : console.log('nah')))
+      .then(resp =>
+        (resp.status === 200
+          ? this.setState({ loginSuccess: true })
+          : this.setState({ loginStatus: `${resp.status} - ${resp.statusText}` })))
       .catch(console.error);
   }
 
@@ -33,8 +38,20 @@ export default class Login extends React.Component {
   }
 
   render() {
+    const styles = {
+      body: {
+        paddingTop: '40px',
+        paddingBottom: '40px',
+        height: '100%',
+        maxWidth: '330px',
+        padding: '15px',
+        margin: '0 auto',
+        textAlign: 'center',
+      },
+    };
+
     return (
-      <div>
+      <div style={styles.body}>
         {this.state.loginSuccess ? (
           <Redirect
             to={{
@@ -43,25 +60,40 @@ export default class Login extends React.Component {
             }}
           />
         ) : (
-          <div className="nav">
-            User:
-            <input
-              type="text"
-              name="username"
-              className="username-input"
-              onChange={e => this.handleOnChange(e)}
-              onKeyPress={e => this.handleKeyPress(e)}
-            />
-            Password:
-            <input
-              type="text"
-              name="password"
-              className="password-input"
-              onChange={e => this.handleOnChange(e)}
-              onKeyPress={e => this.handleKeyPress(e)}
-            />
-            <button onClick={() => this.onClick()}>Log in!</button>
-          </div>
+          <Container>
+            <Link style={{ textDecoration: 'none' }} to="/">
+              <h1>slackk-casa</h1>
+            </Link>
+            <br />
+            {this.state.loginStatus ? (
+              <Alert color="danger">{this.state.loginStatus}</Alert>
+            ) : (
+              undefined
+            )}
+            <h2>Please log in</h2>
+            <br />
+            <FormGroup>
+              <Input
+                type="text"
+                placeholder="Username"
+                name="username"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                size="lg"
+              />
+              <Input
+                type="password"
+                placeholder="Password"
+                name="password"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                size="lg"
+              />
+            </FormGroup>
+            <Button onClick={() => this.logIn()} color="primary" size="lg" block>
+              Log in
+            </Button>
+          </Container>
         )}
       </div>
     );
