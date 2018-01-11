@@ -17,11 +17,11 @@ export default class Signup extends React.Component {
     let { username, password } = this.state;
     fetch('/signup', {
       method: 'POST',
-      body: { username, password },
+      body: JSON.stringify({ username, password }),
       headers: { 'content-type': 'application/json' },
     })
       .then(resp =>
-        (resp.status === 201
+        (resp.status === 200
           ? this.setState({ signupSuccess: true })
           : this.setState({ signupStatus: `${resp.status} - ${resp.statusText}` })))
       .catch(console.error);
