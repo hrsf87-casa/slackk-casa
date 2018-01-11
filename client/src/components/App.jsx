@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect, sendMessage } from '../socketHelpers';
-import MessageList from './MessageList.jsx';
-import { Button } from 'reactstrap';
+import { Input } from 'reactstrap';
 import NavBar from './NavBar.jsx';
+import MessageList from './MessageList.jsx';
 import Body from './Body.jsx';
-import { Container, FormGroup, Label, Input } from 'reactstrap';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,6 +13,7 @@ export default class App extends React.Component {
       // users: [],
       query: '',
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
@@ -21,19 +21,23 @@ export default class App extends React.Component {
   componentDidMount() {
     let server = 'wss://slackk-casa.herokuapp.com';
     // let server = location.origin.replace(/^http/, 'ws');
+
     // connect to the websocket server
     connect(server, this);
   }
 
+  // changes the query state based on user input in text field
   handleChange(event) {
     this.setState({
       query: event.target.value,
     });
   }
 
+  // sends message on enter key pressed and clears form
+  // only when shift+enter pressed breaks to new line
   handleKeyPress(event) {
     // on key press enter send message and reset text box
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.charCode === 13 && !event.shiftKey) {
       event.preventDefault();
       sendMessage(this.state.query);
       // resets text box to blank string
@@ -46,21 +50,19 @@ export default class App extends React.Component {
   render() {
     let { messages, query } = this.state;
     return (
-      <div>
+      <div className="app-container">
         <NavBar />
         <Body messages={messages} />
         <div className="input-container">
-          <FormGroup className="text-area">
-            <Label for="exampleText">Text Area</Label>
-            <Input
-              value={query}
-              type="textarea"
-              name="text"
-              id="exampleText"
-              onChange={this.handleChange}
-              onKeyPress={this.handleKeyPress}
-            />
-          </FormGroup>
+          {/* TODO: substitue main for current channel or DM user */}
+          <Input
+            value={query}
+            type="textarea"
+            name="text"
+            placeholder="Message #main"
+            onChange={this.handleChange}
+            onKeyPress={this.handleKeyPress}
+          />
         </div>
       </div>
     );
