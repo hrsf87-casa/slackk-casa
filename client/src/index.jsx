@@ -7,7 +7,7 @@ import Home from './components/Home.jsx';
 import Signup from './components/Signup.jsx';
 import Login from './components/Login.jsx';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 ReactDOM.render(<Router>
       <div>
