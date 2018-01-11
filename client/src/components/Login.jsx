@@ -1,51 +1,69 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import App from './App.jsx';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: 'Guest',
+      username: '',
       password: '',
+      loginSuccess: false,
     };
-
-    this.handleUsername = this.handleUsername.bind(this);
-    this.handlePassword = this.handlePassword.bind(this);
   }
 
-  onClick() {
-    console.log('logging in');
+  signUp() {
+    let { username, password } = this.state;
+    fetch('/signup', {
+      method: 'POST',
+      body: { username, password },
+      headers: { 'content-type': 'application/json' },
+    })
+      .then(resp => (resp.status === 200 ? this.setState({ loginSuccess: true }) : console.log('nah')))
+      .catch(console.error);
   }
 
-  handleUsername(event) {
+  handleOnChange(event) {
     this.setState({
-      username: event.target.value,
+      [event.target.name]: event.target.value,
     });
-    console.log(this.state.username);
   }
 
-  handlePassword(event) {
-    this.setState({
-      password: event.target.value,
-    });
-    console.log(this.state.password);
+  handleKeyPress(event) {
+    return event.key === 'Enter' ? this.signUp() : undefined;
   }
-
 
   render() {
     return (
-      <div className="nav">
-        User:
-        <input type="text" className="username-input" onChange={this.handleUsername} />
-        Password:
-        <input type="text" className="password-input" onChange={this.handlePassword} />
-        <Link to={{pathname: '/messages', state: {username: this.state.username, password: this.state.password}}}><button onClick={() => this.onClick()}>Log in!</button></Link>
+      <div>
+        {this.state.loginSuccess ? (
+          <Redirect
+            to={{
+              pathname: '/messages',
+              state: { username: this.state.username, password: this.state.password },
+            }}
+          />
+        ) : (
+          <div className="nav">
+            User:
+            <input
+              type="text"
+              name="username"
+              className="username-input"
+              onChange={e => this.handleOnChange(e)}
+              onKeyPress={e => this.handleKeyPress(e)}
+            />
+            Password:
+            <input
+              type="text"
+              name="password"
+              className="password-input"
+              onChange={e => this.handleOnChange(e)}
+              onKeyPress={e => this.handleKeyPress(e)}
+            />
+            <button onClick={() => this.onClick()}>Log in!</button>
+          </div>
+        )}
       </div>
     );
   }
 }
-
-//maybe you need a switch case here so you can pass down the username?
-//Login directs you to either sign up or to app.jsx
