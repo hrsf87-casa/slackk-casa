@@ -21,7 +21,7 @@ export default class Login extends React.Component {
       headers: { 'content-type': 'application/json' },
     })
       .then(resp =>
-        (resp.status === 200
+        (resp.status === 201
           ? this.setState({ loginSuccess: true })
           : this.setState({ loginStatus: `${resp.status} - ${resp.statusText}` })))
       .catch(console.error);
