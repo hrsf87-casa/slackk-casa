@@ -1,0 +1,35 @@
+/* .message-list-container {
+  margin-bottom: -100%;
+  /* padding-bottom: 100%; */
+  /* overflow: auto; */
+/* } */
+
+/* left side */
+.side-bar-col {
+  margin-bottom: -100%;
+  padding-bottom: 100%;
+  background-color: red;
+  /* position: fixed; */
+  height: 100vh;
+  /* left: 0; */
+  /* top: 185px; */
+  /* width: 24px; */
+  overflow: hidden;
+  /* z-index: 1000; */
+}
+
+/* right side */
+.message-list-col {
+  height: 75vh;
+  overflow: scroll;
+}
+
+.text-area {
+  height: 25vh;
+  margin-left: 17%;
+  /* position: absolute; */
+}
+
+.chat-send-button {
+  margin-left: 17%;
+}
