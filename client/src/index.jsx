@@ -10,10 +10,10 @@ import Login from './components/Login.jsx';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 ReactDOM.render(<Router>
-      <div>
-        <Route exact path="/" component={Home} />
-        <Route path="/signup" component={Signup}/>
-        <Route path="/login" component={Login}/>
-        <Route path="/messages" component={App}/>
-      </div>
-    </Router>, document.getElementById('app'));
+  <div>
+    <Route exact path="/" component={Home} />
+    <Route path="/signup" component={Signup}/>
+    <Route path="/login" component={Login}/>
+    <Route path="/messages" component={App}/>
+  </div>
+</Router>, document.getElementById('app'));

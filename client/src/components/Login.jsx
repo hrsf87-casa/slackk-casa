@@ -41,13 +41,11 @@ export default class Login extends React.Component {
         <input type="text" className="username-input" onChange={this.handleUsername} />
         Password:
         <input type="text" className="password-input" onChange={this.handlePassword} />
-        {/* <Route path ="/messages" render={()=> <App username={this.state.username} />}><button>Log in!</button></Route> */}
-
         <Link to={{pathname: '/messages', state: {username: this.state.username, password: this.state.password}}}><button onClick={() => this.onClick()}>Log in!</button></Link>
       </div>
     );
   }
-};
+}
 
 //maybe you need a switch case here so you can pass down the username?
 //Login directs you to either sign up or to app.jsx

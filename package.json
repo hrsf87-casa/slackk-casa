@@ -53,14 +53,13 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^4.0.8",
-    "react-sidebar": "^2.3.2",
     "reactstrap": "^5.0.0-alpha.4",
     "redux": "^3.7.2",
     "ws": "^4.0.0"
   },
   "babel": {
     "presets": [
-      "es2015"
+      "es2015", "react"
     ]
   }
 }
