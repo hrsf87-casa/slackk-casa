@@ -13,7 +13,7 @@ client
   .catch(e => console.error('error connecting to postgres db, ', e.stack));
 
 const initializeDB = () => {
-  const schemas = ['/schema/messages.sql', '/schema/users.sql'];
+  const schemas = ['/schema/users.sql', '/schema/workspaces.sql'];
   return Promise.all(schemas.map(schema =>
     new Promise((resolve, reject) => {
       fs.readFile(
@@ -24,13 +24,23 @@ const initializeDB = () => {
     }).then(data => client.query(data))));
 };
 
-const postMessage = (message, username) =>
-  client.query('INSERT INTO messages (text, username) VALUES ($1, $2) RETURNING *', [
-    message,
-    username,
-  ]);
+const postMessage = (message, username, workspaceId) =>
+  client
+    .query('SELECT db_name FROM workspaces WHERE id = $1', [workspaceId])
+    .then(data =>
+      client.query(
+        'INSERT INTO $db_name (text, username) VALUES ($1, $2) RETURNING *'.replace(
+          '$db_name',
+          data.rows[0].db_name,
+        ),
+        [message, username],
+      ));
 
-const getMessages = () => client.query('SELECT * FROM messages').then(data => data.rows);
+const getMessages = workspaceId =>
+  client
+    .query('SELECT db_name FROM workspaces WHERE id = $1', [workspaceId])
+    .then(data => client.query('SELECT * FROM $db_name'.replace('$db_name', data.rows[0].db_name)))
+    .then(data => data.rows);
 
 // TODO storing username and password as basic text. Change this later to more secure version.
 const createUser = params =>
@@ -49,10 +59,23 @@ const createUser = params =>
       },
     ));
 
-const login = params =>
+const checkUser = params =>
   client.query('SELECT * FROM users WHERE username = ($1) AND password = ($2)', params);
 
-const createWorkspace = (name) => {};
+const createWorkspace = (name, dbName = `ws_${name}${Date.now()}`) =>
+  client
+    .query('INSERT INTO workspaces (name, db_name) VALUES ($1, $2) RETURNING *', [name, dbName])
+    .then(output =>
+      new Promise((resolve, reject) => {
+        fs.readFile(
+          path.join(__dirname, '/schema/messages.sql'),
+          'utf8',
+          (err, data) => (err ? reject(err) : resolve(data)),
+        );
+      }))
+    .then(data => client.query(data.replace('$1', dbName).replace('$1_pk', `${dbName}_pk`)));
+
+const getWorkspaces = () => client.query('SELECT * FROM workspaces').then(data => data.rows);
 
 if (process.env.INITIALIZEDB) {
   initializeDB()
@@ -65,6 +88,8 @@ module.exports = {
   initializeDB,
   postMessage,
   getMessages,
-  login,
   createUser,
+  checkUser,
+  createWorkspace,
+  getWorkspaces,
 };
