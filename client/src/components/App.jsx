@@ -13,11 +13,13 @@ export default class App extends React.Component {
       users: [],
       workSpaces: [],
       query: '',
+      currentWorkSpaceId: null,
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.getWorkSpaces = this.getWorkSpaces.bind(this);
+    this.changeCurrentWorkSpace = this.changeCurrentWorkSpace.bind(this);
   }
 
   componentDidMount() {
@@ -59,12 +61,24 @@ export default class App extends React.Component {
       .catch(console.error);
   }
 
+  changeCurrentWorkSpace(id) {
+    this.setState({ currentWorkSpaceId: id });
+  }
+
   render() {
-    let { messages, query, workSpaces } = this.state;
+    let {
+      messages, query, workSpaces, currentWorkSpaceId,
+    } = this.state;
     return (
       <div className="app-container">
         <NavBar />
-        <Body messages={messages} workSpaces={workSpaces} getWorkSpaces={this.getWorkSpaces} />
+        <Body
+          messages={messages}
+          workSpaces={workSpaces}
+          getWorkSpaces={this.getWorkSpaces}
+          changeCurrentWorkSpace={this.changeCurrentWorkSpace}
+          currentWorkSpaceId={currentWorkSpaceId}
+        />
         <div className="input-container">
           {/* TODO: substitue main for current channel or DM user */}
           <Input

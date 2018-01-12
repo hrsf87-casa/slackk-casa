@@ -32,10 +32,13 @@ const sendMessage = (data) => {
   ws.send(JSON.stringify(msg));
 };
 
+const getMessage = (id) => {
+  const msg = { method: 'GETMESSAGES', data: { workspaceId: id } };
+  ws.send(JSON.stringify(msg));
+};
+
 // ws refers to websocket object
 const afterConnect = () => {
-  const getMessages = JSON.stringify({ method: 'GETMESSAGES' });
-  ws.send(getMessages);
   ws.onmessage = (event) => {
     let serverResp = JSON.parse(event.data);
 
@@ -76,10 +79,14 @@ const connect = (server, component) => {
     console.log('Connected to the server');
     // sets state to current socket session for App methods to have access
     app.setState({ ws });
+
+    // gets workspaces after connection
+    app.getWorkSpaces();
+
     // calls after connect function that takes in the socket session
     // and app component
     afterConnect();
   });
 };
 
-export { connect, sendMessage, afterConnect };
+export { connect, sendMessage, afterConnect, getMessage };

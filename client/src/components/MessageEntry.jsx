@@ -84,19 +84,3 @@ export default class extends React.Component {
     );
   }
 }
-
-// <Media className="message-entry-container">
-//   <Media left href="#">
-//     <Media
-//       object
-//       src="/images/twitter-egg.png"
-//       alt="profile-picture"
-//       className="egg"
-//       style={styles.egg}
-//     />
-//   </Media>
-//   <Media body>
-//     <Media heading>{message.username}</Media>
-//     {message.text}
-//   </Media>
-// </Media>;

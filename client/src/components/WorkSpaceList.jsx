@@ -42,13 +42,18 @@ export default class WorkSpaceList extends Component {
   }
 
   render() {
-    let { workSpaces } = this.props;
+    let { workSpaces, changeCurrentWorkSpace } = this.props;
     let { createFail, createStatus } = this.state;
     return (
       <div>
         <h3> WorkSpaces </h3>
         {workSpaces.map(workSpace => (
-          <WorkSpaceEntry workSpace={workSpace} handleFail={this.handleFail} key={workSpace.id} />
+          <WorkSpaceEntry
+            workSpace={workSpace}
+            handleFail={this.handleFail}
+            key={workSpace.id}
+            changeCurrentWorkSpace={changeCurrentWorkSpace}
+          />
         ))}
         <input type="text" placeholder="workspace name.." onChange={this.handleChange} />
         <button onClick={this.handleClick}> + </button>

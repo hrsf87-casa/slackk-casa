@@ -8,8 +8,10 @@ export default class WorkSpaceEntry extends Component {
   }
 
   handleClick(event) {
-    this.props.handleFail();
+    let { handleFail, changeCurrentWorkSpace } = this.props;
+    handleFail();
     getMessage(event.target.id);
+    changeCurrentWorkSpace(event.target.id);
   }
 
   render() {
