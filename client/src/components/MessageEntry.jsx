@@ -49,7 +49,7 @@ export default class extends React.Component {
         paddingBottom: '5px',
       },
       message: {
-        fontSize: '1em',
+        fontSize: '0.9em',
         overflowWrap: 'break-word',
         textAlign: 'left',
         display: 'fixed',
