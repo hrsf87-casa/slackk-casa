@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const db = require('../database');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+
 const router = express.Router();
 
 const reactRoute = (req, res) => res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
@@ -18,7 +19,8 @@ router.get('/messages', reactRoute);
 router.post('/signup', (req, res) => {
   let { username, password } = req.body;
   let params = [username, password];
-  db.createUser(params)
+  db
+    .createUser(params)
     .then((data, code) => {
       if (code === '23505') {
         res.status(400).send(JSON.stringify('username exists'));
@@ -33,7 +35,8 @@ router.post('/signup', (req, res) => {
 router.post('/login', (req, res) => {
   let { username, password } = req.body;
   let params = [username, password];
-  db.login(params)
+  db
+    .checkUser(params)
     .then((data) => {
       if (data.rows.length === 0) {
         res.status(401).send(JSON.stringify('invalid login'));
