@@ -47,7 +47,7 @@ const onMessage = (ws, wss, data) => {
             code: 201,
             message: 'Post success',
             method: 'POSTMESSAGE',
-            data: dbData.rows[0],
+            data: { message: dbData.rows[0], workspaceId: message.data.workspaceId },
           }));
           return updateEveryoneElse(
             ws,
