@@ -11,11 +11,13 @@ export default class App extends React.Component {
     this.state = {
       messages: [],
       users: [],
+      workSpaces: [],
       query: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.getWorkSpaces = this.getWorkSpaces.bind(this);
   }
 
   componentDidMount() {
@@ -47,14 +49,22 @@ export default class App extends React.Component {
     }
   }
 
-  // TODO: this.props.location.state.username
+  getWorkSpaces() {
+    fetch('/workspaces', {
+      method: 'GET',
+    })
+      .then((resp) => {
+        this.setState({ workSpaces: resp.data });
+      })
+      .catch(console.error);
+  }
 
   render() {
-    let { messages, query } = this.state;
+    let { messages, query, workSpaces } = this.state;
     return (
       <div className="app-container">
         <NavBar />
-        <Body messages={messages} />
+        <Body messages={messages} workSpaces={workSpaces} getWorkSpaces={this.getWorkSpaces} />
         <div className="input-container">
           {/* TODO: substitue main for current channel or DM user */}
           <Input
