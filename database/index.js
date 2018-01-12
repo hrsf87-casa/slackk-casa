@@ -12,23 +12,17 @@ client
   .then()
   .catch(e => console.error('error connecting to postgres db, ', e.stack));
 
-const initializeMessages = () =>
-  new Promise((resolve, reject) => {
-    fs.readFile(
-      path.join(__dirname, '/schema/messages.sql'),
-      'utf8',
-      (err, data) => (err ? reject(err) : resolve(data)),
-    );
-  }).then(data => client.query(data));
-
-const initializeUsers = () =>
-  new Promise((resolve, reject) => {
-    fs.readFile(
-      path.join(__dirname, '/schema/users.sql'),
-      'utf8',
-      (err, data) => (err ? reject(err) : resolve(data)),
-    );
-  }).then(data => client.query(data));
+const initializeDB = () => {
+  const schemas = ['/schema/messages.sql', '/schema/users.sql'];
+  return Promise.all(schemas.map(schema =>
+    new Promise((resolve, reject) => {
+      fs.readFile(
+        path.join(__dirname, schema),
+        'utf8',
+        (err, data) => (err ? reject(err) : resolve(data)),
+      );
+    }).then(data => client.query(data))));
+};
 
 const postMessage = (message, username) =>
   client.query('INSERT INTO messages (text, username) VALUES ($1, $2) RETURNING *', [
@@ -58,22 +52,19 @@ const createUser = params =>
 const login = params =>
   client.query('SELECT * FROM users WHERE username = ($1) AND password = ($2)', params);
 
-if (process.env.INITIALIZEDB) {
-  initializeMessages()
-    .then()
-    .catch(console.log);
+const createWorkspace = (name) => {};
 
-  initializeUsers()
+if (process.env.INITIALIZEDB) {
+  initializeDB()
     .then()
     .catch(console.log);
 }
 
 module.exports = {
   client,
-  initializeMessages,
+  initializeDB,
   postMessage,
   getMessages,
   login,
   createUser,
-  initializeUsers,
 };
