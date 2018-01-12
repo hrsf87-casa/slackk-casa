@@ -51,7 +51,7 @@ const createUser = params =>
       (err, data) => {
         if (err) {
           if (err.code === '23505') {
-            resolve(data, '23505');
+            resolve(params, '23505');
           }
           reject(err);
         }
@@ -63,9 +63,21 @@ const checkUser = params =>
   client.query('SELECT * FROM users WHERE username = ($1) AND password = ($2)', params);
 
 const createWorkspace = (name, dbName = `ws_${name}${Date.now()}`) =>
-  client
-    .query('INSERT INTO workspaces (name, db_name) VALUES ($1, $2) RETURNING *', [name, dbName])
-    .then(output =>
+  new Promise((resolve, reject) =>
+    client.query(
+      'INSERT INTO workspaces (name, db_name) VALUES ($1, $2) RETURNING *',
+      [name, dbName],
+      (err, data) => {
+        if (err) {
+          if (err.code === '23505') {
+            resolve({ name, db_name: dbName }, '23505');
+          }
+          reject(err);
+        }
+        resolve(data);
+      },
+    ))
+    .then(() =>
       new Promise((resolve, reject) => {
         fs.readFile(
           path.join(__dirname, '/schema/messages.sql'),
