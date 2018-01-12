@@ -6,6 +6,7 @@ let app = null;
 // with the new array of messages recieved
 const addNewMessages = (messages) => {
   app.setState({ messages });
+  console.log(messages);
 };
 
 // takes in message as object
@@ -27,6 +28,7 @@ const sendMessage = (data) => {
     data: {
       username: data.username,
       text: data.text,
+      workspaceId: data.workspaceId,
     },
   };
   ws.send(JSON.stringify(msg));
@@ -35,6 +37,12 @@ const sendMessage = (data) => {
 const getMessage = (id) => {
   const msg = { method: 'GETMESSAGES', data: { workspaceId: id } };
   ws.send(JSON.stringify(msg));
+};
+
+const getNewMessage = (msg) => {
+  if (msg.workspaceId === app.state.currentWorkSpaceId) {
+    app.setState({ messages: [...app.state.messages, msg.message] });
+  }
 };
 
 // ws refers to websocket object
@@ -55,7 +63,7 @@ const afterConnect = () => {
         break;
       case 'NEWMESSAGE':
         // concat new message onto messages array in state
-        addNewMessage(serverResp.data);
+        getNewMessage(serverResp.data);
         break;
       case 'GETUSERS':
         setUsers(serverResp.data);

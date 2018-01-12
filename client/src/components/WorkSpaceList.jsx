@@ -22,10 +22,11 @@ export default class WorkSpaceList extends Component {
     this.setState({ createFail: false });
     fetch('/workspaces', {
       method: 'POST',
-      body: JSON.stringify({ workSpace: workSpaceQuery }),
+      body: JSON.stringify({ name: workSpaceQuery }),
       headers: { 'content-type': 'application/json' },
     })
-      .then(resp => (resp.status === 201 ? getWorkSpaces() : this.setState({ createFail: true })))
+      .then(resp =>
+        (resp.status === 201 ? getWorkSpaces() : this.setState({ createFail: true })))
       .catch(console.error);
   }
 
@@ -42,12 +43,12 @@ export default class WorkSpaceList extends Component {
   }
 
   render() {
-    let { workSpaces, changeCurrentWorkSpace } = this.props;
+    let { changeCurrentWorkSpace } = this.props;
     let { createFail, createStatus } = this.state;
     return (
       <div>
         <h3> WorkSpaces </h3>
-        {workSpaces.map(workSpace => (
+        {this.props.workSpaces.map(workSpace => (
           <WorkSpaceEntry
             workSpace={workSpace}
             handleFail={this.handleFail}

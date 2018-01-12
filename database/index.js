@@ -89,11 +89,11 @@ const createWorkspace = (name, dbName = `ws_${name}${Date.now()}`) =>
 
 const getWorkspaces = () => client.query('SELECT * FROM workspaces').then(data => data.rows);
 
-if (process.env.INITIALIZEDB) {
+// if (process.env.INITIALIZEDB) {
   initializeDB()
     .then()
     .catch(console.log);
-}
+// }
 
 module.exports = {
   client,
