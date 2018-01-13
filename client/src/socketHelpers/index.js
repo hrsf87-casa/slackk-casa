@@ -1,17 +1,16 @@
 let ws = null;
 let app = null;
 
-// takes in an array of messages
-// objects and sets the component state messages
-// with the new array of messages recieved
-const addNewMessages = (messages) => {
+/* takes in an array of messages
+  objects and sets the component state messages
+  with the new array of messages recieved */
+const loadMessages = (messages) => {
   app.setState({ messages });
-  console.log(messages);
 };
 
-// takes in message as object
-// msg ({id: #, text: '', createdAt: date})
-// and concats message to message state of app
+/* takes in message as object
+   msg ({id: INT, text: STRING, createdAt: DATE, workspaceId: INT})
+   and concats message to message state of app */
 const addNewMessage = (message) => {
   app.setState({ messages: [...app.state.messages, message] });
 };
@@ -34,12 +33,14 @@ const sendMessage = (data) => {
   ws.send(JSON.stringify(msg));
 };
 
-const getMessage = (id) => {
+// takes a workspace Id as INT for parameter and returns the messages for that current workspace
+const getWorkSpaceMessagesFromServer = (id) => {
   const msg = { method: 'GETMESSAGES', data: { workspaceId: id } };
   ws.send(JSON.stringify(msg));
 };
 
-const getNewMessage = (msg) => {
+// takes in all new messages and filters and concats messages that match the current workSpace
+const filterMsgByWorkSpace = (msg) => {
   if (msg.workspaceId === app.state.currentWorkSpaceId) {
     app.setState({ messages: [...app.state.messages, msg.message] });
   }
@@ -58,12 +59,10 @@ const afterConnect = () => {
 
     switch (serverResp.method) {
       case 'GETMESSAGES':
-        // render all messages
-        addNewMessages(serverResp.data);
+        loadMessages(serverResp.data);
         break;
       case 'NEWMESSAGE':
-        // concat new message onto messages array in state
-        getNewMessage(serverResp.data);
+        filterMsgByWorkSpace(serverResp.data);
         break;
       case 'GETUSERS':
         setUsers(serverResp.data);
@@ -89,7 +88,7 @@ const connect = (server, component) => {
     app.setState({ ws });
 
     // gets workspaces after connection
-    app.getWorkSpaces();
+    app.loadWorkSpaces();
 
     // calls after connect function that takes in the socket session
     // and app component
@@ -97,4 +96,4 @@ const connect = (server, component) => {
   });
 };
 
-export { connect, sendMessage, afterConnect, getMessage };
+export { connect, sendMessage, afterConnect, getWorkSpaceMessagesFromServer };
