@@ -13,7 +13,7 @@ export default class Body extends React.Component {
     let {
       workSpaces,
       messages,
-      getWorkSpaces,
+      loadWorkSpaces,
       changeCurrentWorkSpace,
       currentWorkSpaceId,
     } = this.props;
@@ -23,7 +23,7 @@ export default class Body extends React.Component {
           <Col className="side-bar-col" xs="2">
             <WorkSpaceList
               workSpaces={workSpaces}
-              getWorkSpaces={getWorkSpaces}
+              loadWorkSpaces={loadWorkSpaces}
               changeCurrentWorkSpace={changeCurrentWorkSpace}
             />
           </Col>
