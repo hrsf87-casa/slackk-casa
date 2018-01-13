@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Alert } from 'reactstrap';
 import WorkSpaceEntry from './WorkSpaceEntry.jsx';
+import CreateWorkSpace from './CreateWorkSpace.jsx';
 
 export default class WorkSpaceList extends Component {
   constructor(props) {
@@ -11,43 +12,40 @@ export default class WorkSpaceList extends Component {
       createStatus: 'Failed to create workspace',
     };
 
-    this.handleClick = this.handleClick.bind(this);
     this.handleFail = this.handleFail.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.getWorkSpaceQuery = this.getWorkSpaceQuery.bind(this);
+    this.createWorkSpace = this.createWorkSpace.bind(this);
+  }
+
+  getWorkSpaceQuery(query) {
+    this.setState({ workSpaceQuery: query });
   }
 
   createWorkSpace() {
-    let { getWorkSpaces } = this.props;
+    let { loadWorkSpaces } = this.props;
     let { workSpaceQuery, createFail } = this.state;
     this.setState({ createFail: false });
-    fetch('/workspaces', {
-      method: 'POST',
-      body: JSON.stringify({ name: workSpaceQuery }),
-      headers: { 'content-type': 'application/json' },
-    })
-      .then(resp =>
-        (resp.status === 201 ? getWorkSpaces() : this.setState({ createFail: true })))
-      .catch(console.error);
-  }
-
-  handleClick() {
-    this.createWorkSpace();
+    if (workSpaceQuery.length > 0) {
+      fetch('/workspaces', {
+        method: 'POST',
+        body: JSON.stringify({ name: workSpaceQuery }),
+        headers: { 'content-type': 'application/json' },
+      })
+        .then(resp => (resp.status === 201 ? loadWorkSpaces() : this.setState({ createFail: true })))
+        .catch(console.error);
+    }
   }
 
   handleFail() {
     this.setState({ createFail: false });
   }
 
-  handleChange(event) {
-    this.setState({ workSpaceQuery: event.target.value });
-  }
-
   render() {
     let { changeCurrentWorkSpace } = this.props;
-    let { createFail, createStatus } = this.state;
+    let { createFail, createStatus, workSpaceQuery } = this.state;
     return (
       <div>
-        <h3> WorkSpaces </h3>
+        <h3 className="workSpace-header"> Workspaces </h3>
         {this.props.workSpaces.map(workSpace => (
           <WorkSpaceEntry
             workSpace={workSpace}
@@ -56,8 +54,10 @@ export default class WorkSpaceList extends Component {
             changeCurrentWorkSpace={changeCurrentWorkSpace}
           />
         ))}
-        <input type="text" placeholder="workspace name.." onChange={this.handleChange} />
-        <button onClick={this.handleClick}> + </button>
+        <CreateWorkSpace
+          getWorkSpaceQuery={this.getWorkSpaceQuery}
+          createWorkSpace={this.createWorkSpace}
+        />
         <br />
         <br />
         {createFail ? <Alert color="danger"> {createStatus} </Alert> : undefined}
