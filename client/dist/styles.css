@@ -47,3 +47,26 @@
 .message-entry-container:hover {
   background-color: #f9f9f9;
 }
+
+.workSpace-name,
+.workSpace-header {
+  color: #c7c1c6;
+}
+
+.workSpace-entry-container {
+  padding: 10px 0 10px 0;
+}
+
+.workSpace-entry-container:hover {
+  background-color: #3e323c;
+}
+
+.workSpace-header {
+  margin-top: 10px;
+}
+
+.workSpace-name {
+  color: #c7c1c6;
+  text-align: left;
+  font-size: 1em;
+}

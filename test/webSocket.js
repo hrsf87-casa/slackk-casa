@@ -23,6 +23,7 @@ describe('WebSockets', () => {
     it('should return a response object', (done) => {
       ws.send(JSON.stringify({
         method: 'GETMESSAGES',
+        data: { workspaceId: 1 },
       }));
       ws.on('message', (data) => {
         let parsedData = JSON.parse(data);
@@ -36,6 +37,7 @@ describe('WebSockets', () => {
     it('should return a list of messages', (done) => {
       ws.send(JSON.stringify({
         method: 'GETMESSAGES',
+        data: { workspaceId: 1 },
       }));
       ws.on('message', (data) => {
         let parsedData = JSON.parse(data);
@@ -51,6 +53,7 @@ describe('WebSockets', () => {
         data: {
           text: 'test message',
           username: 'test user',
+          workspaceId: 1,
         },
       }));
       ws.on('message', (data) => {
@@ -67,6 +70,7 @@ describe('WebSockets', () => {
         data: {
           text: 'test message',
           username: 'test user',
+          workspaceId: 1,
         },
       }));
       ws.on('message', (data) => {
@@ -96,6 +100,7 @@ describe('WebSockets', () => {
         data: {
           text: 'test message',
           username: 'test user',
+          workspaceId: 1,
         },
       }));
       ws2.on('message', (data) => {
@@ -112,13 +117,15 @@ describe('WebSockets', () => {
         data: {
           text: 'test message',
           username: 'test user',
+          workspaceId: 1,
         },
       }));
       ws2.on('message', (data) => {
         let parsedData = JSON.parse(data);
-        expect(parsedData.data.id).to.be.a('number');
-        expect(parsedData.data.text).to.equal('test message');
-        expect(parsedData.data.username).to.equal('test user');
+        expect(parsedData.data.message.id).to.be.a('number');
+        expect(parsedData.data.message.text).to.equal('test message');
+        expect(parsedData.data.message.username).to.equal('test user');
+        expect(parsedData.data.workspaceId).to.be.a('number');
         done();
       });
     }).timeout(1000);

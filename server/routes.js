@@ -1,47 +1,67 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
+
 const db = require('../database');
-const bodyParser = require('body-parser')
+const auth = require('./auth');
+
 const router = express.Router();
 
 const reactRoute = (req, res) => res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
 
 router.use(express.static(path.join(__dirname, '../client/dist')));
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
 
 router.get('/signup', reactRoute);
 router.get('/login', reactRoute);
 router.get('/messages', reactRoute);
 
-// maybe send err.code instead of 401.
-router.post('/signup', (req, res) => {
-  let { username, password } = req.body;
-  let params = [username, password];
-  db.createUser(params)
-    .then((data, code) => {
-      if (code === '23505') {
-        res.status(400).send(JSON.stringify('username exists'));
-      } else {
-        res.send(200);
-      }
-    })
-    .catch(err => res.status(401).send(err.message));
+router.get('/workspaces', async (req, res) => {
+  try {
+    res.status(200).json(await db.getWorkspaces());
+  } catch (err) {
+    res.status(500).json(err.stack);
+  }
 });
 
-// check web socket connections
-router.post('/login', (req, res) => {
-  let { username, password } = req.body;
-  let params = [username, password];
-  db.login(params)
-    .then((data) => {
-      if (data.rows.length === 0) {
-        res.status(401).send(JSON.stringify('invalid login'));
-      } else {
-        res.send(201);
-      }
-    })
-    .catch(err => console.error(err));
+router.post('/signup', bodyParser.json());
+router.post('/signup', async (req, res) => {
+  try {
+    if (await db.getUser(req.body.username)) {
+      return res.status(400).json('username exists');
+    }
+    await auth.addUser(req.body.username, req.body.password);
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(401).json(err.stack);
+  }
+});
+
+router.post('/login', bodyParser.json());
+router.post('/login', async (req, res) => {
+  try {
+    if (await auth.checkUser(req.body.username, req.body.password)) {
+      return res.sendStatus(201);
+    }
+    return res.sendStatus(401);
+  } catch (err) {
+    return res.status(401).json(err.stack);
+  }
+});
+
+router.post('/workspaces', bodyParser.json());
+router.post('/workspaces', async (req, res) => {
+  try {
+    const workspaces = await db.getWorkspaces();
+    if (
+      workspaces.find(workspace => workspace.name.toLowerCase() === req.body.name.toLowerCase())
+    ) {
+      return res.status(400).json('workspace exists');
+    }
+    await db.createWorkspace(req.body.name);
+    return res.sendStatus(201);
+  } catch (err) {
+    return res.status(500).json(err.stack);
+  }
 });
 
 module.exports = router;

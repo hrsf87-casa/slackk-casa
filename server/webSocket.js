@@ -2,6 +2,14 @@ const WebSocket = require('ws');
 
 const db = require('../database');
 
+const response = (code, message, method, data) =>
+  JSON.stringify({
+    code,
+    message,
+    method,
+    data,
+  });
+
 const updateEveryoneElse = (ws, wss, data) => {
   wss.clients.forEach((client) => {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -10,64 +18,44 @@ const updateEveryoneElse = (ws, wss, data) => {
   });
 };
 
-const onMessage = (ws, wss, data) => {
+const onMessage = async (ws, wss, data) => {
   let message;
   try {
     message = JSON.parse(data);
-  } catch (e) {
-    return ws.send(JSON.stringify({
-      code: 400,
-      message: e.message,
-    }));
+  } catch (err) {
+    return ws.send(response(400, err.message));
   }
 
   switch (message.method) {
     case 'GETMESSAGES':
-      db
-        .getMessages()
-        .then(messages =>
-          ws.send(JSON.stringify({
-            code: 200,
-            message: 'Request success',
-            method: 'GETMESSAGES',
-            data: messages,
-          })))
-        .catch(err =>
-          ws.send(JSON.stringify({
-            code: 400,
-            message: err.message,
-            method: 'GETMESSAGES',
-          })));
-      break;
+      try {
+        const messages = await db.getMessages(Number(message.data.workspaceId));
+        return ws.send(response(200, 'Request success', message.method, messages));
+      } catch (err) {
+        return ws.send(response(400, err.stack, message.method));
+      }
     case 'POSTMESSAGE':
-      db
-        .postMessage(message.data.text, message.data.username)
-        .then((dbData) => {
-          ws.send(JSON.stringify({
-            code: 201,
-            message: 'Post success',
-            method: 'POSTMESSAGE',
-            data: dbData.rows[0],
-          }));
-          return updateEveryoneElse(
-            ws,
-            wss,
-            JSON.stringify({
-              code: 200,
-              message: 'New message',
-              method: 'NEWMESSAGE',
-              data: dbData.rows[0],
-            }),
-          );
-        })
-        .catch(err =>
-          ws.send(JSON.stringify({
-            code: 400,
-            message: err.message,
-            method: 'POSTMESSAGE',
-          })));
-      break;
+      try {
+        let postedMessage = await db.postMessage(
+          message.data.text,
+          message.data.username,
+          message.data.workspaceId,
+        );
+        [postedMessage] = postedMessage.rows;
+        ws.send(response(201, 'Post success', message.method, postedMessage));
+        return updateEveryoneElse(
+          ws,
+          wss,
+          response(200, 'New message', 'NEWMESSAGE', {
+            message: postedMessage,
+            workspaceId: message.data.workspaceId,
+          }),
+        );
+      } catch (err) {
+        return ws.send(response(400, err.stack, message.method));
+      }
     default:
+      return ws.send(response(405, 'Unknown method', message.method));
   }
 };
 
