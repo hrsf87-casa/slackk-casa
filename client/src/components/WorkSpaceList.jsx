@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'reactstrap';
+import { Alert, Row, Col } from 'reactstrap';
 import WorkSpaceEntry from './WorkSpaceEntry.jsx';
 import CreateWorkSpace from './CreateWorkSpace.jsx';
 
@@ -44,7 +44,17 @@ export default class WorkSpaceList extends Component {
     let { createFail, createStatus, workSpaceQuery } = this.state;
     return (
       <div>
-        <h3 className="workSpace-header"> Workspaces </h3>
+        <Row>
+          <Col>
+            <h3 className="workSpace-header"> Workspaces </h3>{' '}
+          </Col>
+          <Col className="mt-2">
+            <CreateWorkSpace
+              getWorkSpaceQuery={this.getWorkSpaceQuery}
+              createWorkSpace={this.createWorkSpace}
+            />
+          </Col>
+        </Row>
         {workSpaces.map(workSpace => (
           <WorkSpaceEntry
             workSpace={workSpace}
@@ -54,10 +64,6 @@ export default class WorkSpaceList extends Component {
             currentWorkSpaceId={currentWorkSpaceId}
           />
         ))}
-        <CreateWorkSpace
-          getWorkSpaceQuery={this.getWorkSpaceQuery}
-          createWorkSpace={this.createWorkSpace}
-        />
         <br />
         <br />
         {createFail ? <Alert color="danger"> Failed to create workspace </Alert> : undefined}
