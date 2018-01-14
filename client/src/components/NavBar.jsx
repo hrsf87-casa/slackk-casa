@@ -30,7 +30,7 @@ export default class NavBar extends React.Component {
   render() {
     return (
       <Navbar color="faded" light expand="md">
-        <NavbarBrand href="/messages">
+        <NavbarBrand>
           <h1>slackk-casa</h1>
         </NavbarBrand>
         <h3 className="text-center">
@@ -44,7 +44,7 @@ export default class NavBar extends React.Component {
                 Options
               </DropdownToggle>
               <DropdownMenu>
-                <NavLink href="/">
+                <NavLink href="/login">
                   <DropdownItem>Sign Out</DropdownItem>
                 </NavLink>
               </DropdownMenu>
