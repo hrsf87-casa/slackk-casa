@@ -8,22 +8,34 @@ export default class Signup extends React.Component {
     this.state = {
       username: '',
       password: '',
+      email: '',
+      passwordHint: '',
       signupSuccess: false,
       signupStatus: '',
     };
   }
 
   signUp() {
+    let {
+      username, password, email, passwordHint,
+    } = this.state;
     if (username === '') {
       return this.setState({ signupStatus: 'Enter a username' });
     }
-    let { username, password } = this.state;
-    if (username === '') {
-      return this.setState({ signupStatus: 'Enter a username' });
+    if (password === '') {
+      return this.setState({ signupStatus: 'Enter a password' });
+    }
+    if (email === '') {
+      return this.setState({ signupStatus: 'Enter an email' });
     }
     fetch('/signup', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({
+        username,
+        password,
+        email,
+        passwordHint,
+      }),
       headers: { 'content-type': 'application/json' },
     })
       .then(resp =>
@@ -79,7 +91,7 @@ export default class Signup extends React.Component {
             <FormGroup>
               <Input
                 type="text"
-                placeholder="Username"
+                placeholder="Username*"
                 name="username"
                 onChange={e => this.handleOnChange(e)}
                 onKeyPress={e => this.handleKeyPress(e)}
@@ -87,8 +99,24 @@ export default class Signup extends React.Component {
               />
               <Input
                 type="password"
-                placeholder="Password"
+                placeholder="Password*"
                 name="password"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                bssize="lg"
+              />
+              <Input
+                type="email"
+                placeholder="Email*"
+                name="email"
+                onChange={e => this.handleOnChange(e)}
+                onKeyPress={e => this.handleKeyPress(e)}
+                bssize="lg"
+              />
+              <Input
+                type="passwordHint"
+                placeholder="Password Hint"
+                name="passwordHint"
                 onChange={e => this.handleOnChange(e)}
                 onKeyPress={e => this.handleKeyPress(e)}
                 bssize="lg"
@@ -97,6 +125,7 @@ export default class Signup extends React.Component {
             <Button onClick={() => this.signUp()} color="primary" size="lg" block>
               Sign up
             </Button>
+            <div>*Required</div>
           </div>
         )}
       </div>

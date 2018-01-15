@@ -24,9 +24,34 @@ export default class Login extends React.Component {
       headers: { 'content-type': 'application/json' },
     })
       .then(resp =>
-        (resp.status === 201
+        (resp.status === 200
           ? this.setState({ loginSuccess: true })
           : this.setState({ loginStatus: `${resp.status} - ${resp.statusText}` })))
+      .catch(console.error);
+  }
+
+  recoverPassword() {
+    let { username } = this.state;
+    if (username === '') {
+      return this.setState({
+        loginStatus: 'Enter your username or ssn for a chance to retrieve your password',
+      });
+    }
+    fetch('/recover', {
+      method: 'POST',
+      body: JSON.stringify({ username }),
+      headers: { 'content-type': 'application/json' },
+    })
+      .then(resp => resp.json())
+      .then(data =>
+        (data.password_hint.length
+          ? this.setState({
+            loginStatus: `The hint for user ${username} is: ${data.password_hint}`,
+          })
+          : this.setState({
+            loginStatus:
+                  'Looks like someone forget to set a password hint. Try making a new account instead!',
+          })))
       .catch(console.error);
   }
 
@@ -101,6 +126,12 @@ export default class Login extends React.Component {
                 Sign Up
               </Button>
             </Link>
+            <br />
+            <div>
+              <Button onClick={() => this.recoverPassword()} color="primary" bssize="sm">
+                Forgot your password? Click here
+              </Button>
+            </div>
           </div>
         )}
       </div>
