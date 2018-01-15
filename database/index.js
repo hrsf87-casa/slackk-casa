@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  connectionString: process.env.DATABASE_URL || 'postgresql://austin123:austin123@localhost/slackk',
+  // ssl: true,
 });
 
 client
@@ -90,11 +90,11 @@ const createWorkspace = (name, dbName = `ws_${name}${Date.now()}`) =>
 
 const getWorkspaces = () => client.query('SELECT * FROM workspaces').then(data => data.rows);
 
-if (process.env.INITIALIZEDB) {
+// if (process.env.INITIALIZEDB) {
   initializeDB()
     .then()
     .catch(err => console.error('error creating database tables, ', err.stack));
-}
+// }
 
 module.exports = {
   client,
