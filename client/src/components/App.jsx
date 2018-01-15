@@ -32,12 +32,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-<<<<<<< HEAD
-    let server = 'ws://localhost:3000';
-    // let server = location.origin.replace(/^http/, 'ws');
-=======
     let server = location.origin.replace(/^http/, 'ws');
->>>>>>> d45f67b98e4acf8340c8c8ead2bf64d63153efbc
 
     // connect to the websocket server
     connect(server, this);
@@ -66,6 +61,8 @@ export default class App extends React.Component {
         query: '',
       });
     }
+
+
   }
 
   loadWorkSpaces() {

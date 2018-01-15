@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Collapse,
+  inNavBar,
   Navbar,
   NavbarToggler,
   NavbarBrand,
