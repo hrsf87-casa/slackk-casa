@@ -32,8 +32,13 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+<<<<<<< HEAD
     // let server = 'ws://127.0.0.1:3000';
     let server = location.origin.replace(/^http/, 'ws');
+=======
+    let server = 'ws://localhost:3000';
+    // let server = location.origin.replace(/^http/, 'ws');
+>>>>>>> stuff
 
     // connect to the websocket server
     connect(server, this);
