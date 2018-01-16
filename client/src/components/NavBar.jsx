@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import {
   Collapse,
   inNavBar,
@@ -40,7 +42,7 @@ export default class NavBar extends React.Component {
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
-            <UncontrolledDropdown nav inNavbar>
+            <UncontrolledDropdown nav>
               <DropdownToggle nav caret>
                 Options
               </DropdownToggle>
@@ -55,4 +57,11 @@ export default class NavBar extends React.Component {
       </Navbar>
     );
   }
+}
+
+NavBar.propTypes = {
+  currentWorksSpaceName: PropTypes.string,
+}
+NavBar.defaultProps = {
+  currentWorkSpaceName: 'select a workspace!',
 }
