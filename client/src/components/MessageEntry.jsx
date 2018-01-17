@@ -2,34 +2,35 @@ import React from 'react';
 import { Container, Media } from 'reactstrap';
 import { EmojisList } from './EmojisList';
 
-//Individual message container
+// Individual message container
 export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       toggleHover: false,
-      activeEmoji: 'stuck_out_tongue.png',
       showEmojisDropdown: false,
     };
+
     this.handleEmojiDropdownClick = this.handleEmojiDropdownClick.bind(this);
     this.handleEmojiClick = this.handleEmojiClick.bind(this);
   }
   toggleHover() {
     this.setState({ toggleHover: !this.state.toggleHover });
   }
-  handleEmojiDropdownClick() {
-    this.setState({ showEmojisDropdown: !this.state.showEmojisDropdown });
-  }
   handleEmojiClick(emoji) {
-    // to make this update all existing messages, back-end changes are required. 
-    this.setState({ 
-      activeEmoji: emoji,
+    this.props.changeActiveEmoji(emoji);
+    this.setState({
       showEmojisDropdown: !this.state.showEmojisDropdown,
     });
   }
+  handleEmojiDropdownClick() {
+    if (this.props.activeUsername !== this.props.message.username) return;
+    this.setState({ showEmojisDropdown: !this.state.showEmojisDropdown });
+  }
+
   render() {
     const { message } = this.props;
-    //for the color changing avatars
+    // for the color changing avatars
     let color = () => {
       let colors = [
         '#346A85',
@@ -50,10 +51,11 @@ export default class extends React.Component {
       let index = Math.floor(Math.random() * colors.length);
       return colors[index];
     };
-    //Styles for individual message component
+    // Styles for individual message component
     const styles = {
       body: {
         padding: '15px 0 15px 0',
+        display: 'flex',
       },
       timeStamp: {
         fontSize: '10px',
@@ -83,25 +85,24 @@ export default class extends React.Component {
         border: 'solid black',
         padding: '5px',
         paddingBottom: '0',
+        marginLeft: '75px',
         display: 'block',
         position: 'absolute',
         width: '300px',
         boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
         zIndex: '1',
         maxHeight: '150px',
-        overflowX: 'hidden',
-        overflowX: 'auto', 
+        overflowX: 'auto',
       },
     };
 
     return (
       <div className="message-entry-container">
         <Container style={styles.body}>
-          <Media left href="#">
+          <Media>
             <img
               className="egg img-responsive"
-              href='#'
-              src={'emoji/' + this.state.activeEmoji}
+              src={`emoji/${message.username === this.props.activeUsername ? this.props.activeEmoji : 'stuck_out_tongue.png'}`}
               style={styles.egg}
               onClick={this.handleEmojiDropdownClick}
             />
@@ -110,7 +111,7 @@ export default class extends React.Component {
                 {EmojisList.map(emoji => (
                   <img
                     key={emoji}
-                    src={'emoji/' + emoji}
+                    src={`emoji/${emoji}`}
                     height="32px"
                     width="32px"
                     onClick={() => this.handleEmojiClick(emoji)}
